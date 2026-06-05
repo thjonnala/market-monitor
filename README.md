@@ -194,26 +194,29 @@ Unit tests for the engine and indicators live in `backend/tests/MarketMonitor.Te
 
 ---
 
-## Deploying the frontend to Vercel
+## Deploying the frontend to GitHub Pages (custom domain)
 
-The frontend is a **Vite** SPA (not Create React App). In the Vercel project settings:
+The frontend (Vite SPA) deploys to **GitHub Pages** via GitHub Actions and is served at the
+custom domain **https://marketmonitor.thiruapps.com**.
 
-1. **Root Directory:** set to **`frontend`** (this is the key step — the repo is a monorepo,
-   and Vercel must build inside `frontend/`, not the repo root).
-2. **Framework Preset:** **Vite** (if it shows "Create React App", change it — that causes
-   the `react-scripts build: command not found` / exit 127 error).
+How it's wired:
+- [`.github/workflows/deploy-frontend.yml`](.github/workflows/deploy-frontend.yml) builds
+  `frontend/` on every push to `main` (that touches `frontend/`) and publishes `frontend/dist`.
+- [`frontend/public/CNAME`](frontend/public/CNAME) holds `marketmonitor.thiruapps.com`, so the
+  custom domain persists across deploys.
+- The workflow copies `index.html` → `404.html` so client-side routes (e.g. `/stocks/AAPL`)
+  work on refresh (GitHub Pages has no rewrite rules).
+- The API base URL is baked in from [`frontend/.env.production`](frontend/.env.production)
+  (`VITE_API_BASE_URL` → the Azure App Service API). Vite's `base` stays `/` since the site is
+  served at the domain root.
 
-The committed [`frontend/vercel.json`](frontend/vercel.json) pins `framework: vite`,
-`buildCommand: vite build`, `outputDirectory: dist`, and an SPA rewrite so client-side
-routes (e.g. `/stocks/AAPL`) don't 404 on refresh.
+**One-time GitHub setup:**
+1. Repo **Settings → Pages → Build and deployment → Source: `GitHub Actions`**.
+2. **Settings → Pages → Custom domain:** `marketmonitor.thiruapps.com` (and enable *Enforce HTTPS*).
+3. DNS: a `CNAME` record for `marketmonitor` → `thjonnala.github.io`.
 
-**Environment variable:** set `VITE_API_BASE_URL` in Vercel to your deployed API URL
-(e.g. `https://your-api.example.com/api`). Without it the app calls `http://localhost:5080`
-and data requests will fail in production.
-
-> The **.NET API cannot run on Vercel** — host it separately (Azure App Service, Azure
-> Container Apps, Render, Fly.io, etc.) and point `VITE_API_BASE_URL` at it. Remember to add
-> your deployed frontend's origin to `Cors:AllowedOrigins` on the API.
+The deployed origin (`https://marketmonitor.thiruapps.com`) is already allowed by the API's
+CORS (`Cors:AllowedOrigins: ["*"]` in production).
 
 ## Production (Azure SQL)
 
