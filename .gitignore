@@ -1,0 +1,53 @@
+# ---------------------------------------------------------------------------
+# Market Monitor — root .gitignore
+# Excludes secrets, build output, dependencies, and local-only config.
+# ---------------------------------------------------------------------------
+
+# === Secrets / local config (NEVER commit) ===
+**/appsettings.*.local.json
+**/secrets.json
+*.user
+.env
+.env.*
+!.env.example
+
+# Claude Code local settings (may capture machine-local data / commands)
+.claude/settings.local.json
+
+# === .NET build output ===
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+*.dll
+*.pdb
+artifacts/
+
+# === .NET / Rider / VS ===
+.vs/
+.idea/
+*.suo
+*.userprefs
+
+# === EF / SQLite local DB files (if any) ===
+*.db
+*.db-shm
+*.db-wal
+
+# === Node / frontend ===
+node_modules/
+frontend/dist/
+dist/
+*.local
+
+# === Logs ===
+*.log
+logs/
+
+# === OS noise ===
+.DS_Store
+Thumbs.db
+
+# === Editors ===
+.vscode/*
+!.vscode/extensions.json
