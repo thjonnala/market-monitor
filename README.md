@@ -194,6 +194,27 @@ Unit tests for the engine and indicators live in `backend/tests/MarketMonitor.Te
 
 ---
 
+## Deploying the frontend to Vercel
+
+The frontend is a **Vite** SPA (not Create React App). In the Vercel project settings:
+
+1. **Root Directory:** set to **`frontend`** (this is the key step — the repo is a monorepo,
+   and Vercel must build inside `frontend/`, not the repo root).
+2. **Framework Preset:** **Vite** (if it shows "Create React App", change it — that causes
+   the `react-scripts build: command not found` / exit 127 error).
+
+The committed [`frontend/vercel.json`](frontend/vercel.json) pins `framework: vite`,
+`buildCommand: vite build`, `outputDirectory: dist`, and an SPA rewrite so client-side
+routes (e.g. `/stocks/AAPL`) don't 404 on refresh.
+
+**Environment variable:** set `VITE_API_BASE_URL` in Vercel to your deployed API URL
+(e.g. `https://your-api.example.com/api`). Without it the app calls `http://localhost:5080`
+and data requests will fail in production.
+
+> The **.NET API cannot run on Vercel** — host it separately (Azure App Service, Azure
+> Container Apps, Render, Fly.io, etc.) and point `VITE_API_BASE_URL` at it. Remember to add
+> your deployed frontend's origin to `Cors:AllowedOrigins` on the API.
+
 ## Production (Azure SQL)
 
 Do **not** hard-code production secrets. Provide them via environment variables /
