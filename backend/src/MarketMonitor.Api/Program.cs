@@ -43,7 +43,13 @@ var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get
                      ?? new[] { "http://localhost:5173" };
 builder.Services.AddCors(options =>
     options.AddPolicy(CorsPolicy, policy =>
-        policy.WithOrigins(allowedOrigins).AllowAnyHeader().AllowAnyMethod()));
+    {
+        // "*" => allow any origin (safe here: auth uses bearer headers, not cookies).
+        if (allowedOrigins.Contains("*"))
+            policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+        else
+            policy.WithOrigins(allowedOrigins).AllowAnyHeader().AllowAnyMethod();
+    }));
 
 // Global exception handling -> ProblemDetails.
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

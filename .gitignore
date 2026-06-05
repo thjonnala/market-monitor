@@ -5,14 +5,20 @@
 
 # === Secrets / local config (NEVER commit) ===
 **/appsettings.*.local.json
+**/appsettings.Production.json
 **/secrets.json
 *.user
 .env
 .env.*
 !.env.example
+!.env.production
 
 # Claude Code local settings (may capture machine-local data / commands)
 .claude/settings.local.json
+
+# Azure publish output / deployment artifacts
+backend/publish*/
+backend/*.zip
 
 # === .NET build output ===
 [Bb]in/
