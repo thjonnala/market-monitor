@@ -13,7 +13,7 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "AspNetRoles",
+                name: "mm_AspNetRoles",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
@@ -23,11 +23,11 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                    table.PrimaryKey("PK_mm_AspNetRoles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
+                name: "mm_AspNetUsers",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
@@ -50,11 +50,11 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.PrimaryKey("PK_mm_AspNetUsers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Portfolios",
+                name: "mm_Portfolios",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -67,11 +67,11 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Portfolios", x => x.Id);
+                    table.PrimaryKey("PK_mm_Portfolios", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Symbols",
+                name: "mm_Symbols",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -84,11 +84,11 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Symbols", x => x.Id);
+                    table.PrimaryKey("PK_mm_Symbols", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "WatchlistItems",
+                name: "mm_WatchlistItems",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -99,11 +99,11 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WatchlistItems", x => x.Id);
+                    table.PrimaryKey("PK_mm_WatchlistItems", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetRoleClaims",
+                name: "mm_AspNetRoleClaims",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -114,17 +114,17 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                    table.PrimaryKey("PK_mm_AspNetRoleClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                        name: "FK_mm_AspNetRoleClaims_mm_AspNetRoles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
+                        principalTable: "mm_AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserClaims",
+                name: "mm_AspNetUserClaims",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -135,17 +135,17 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                    table.PrimaryKey("PK_mm_AspNetUserClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
+                        name: "FK_mm_AspNetUserClaims_mm_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "mm_AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserLogins",
+                name: "mm_AspNetUserLogins",
                 columns: table => new
                 {
                     LoginProvider = table.Column<string>(type: "text", nullable: false),
@@ -155,17 +155,17 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.PrimaryKey("PK_mm_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
                     table.ForeignKey(
-                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
+                        name: "FK_mm_AspNetUserLogins_mm_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "mm_AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserRoles",
+                name: "mm_AspNetUserRoles",
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
@@ -173,23 +173,23 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.PrimaryKey("PK_mm_AspNetUserRoles", x => new { x.UserId, x.RoleId });
                     table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        name: "FK_mm_AspNetUserRoles_mm_AspNetRoles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
+                        principalTable: "mm_AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
+                        name: "FK_mm_AspNetUserRoles_mm_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "mm_AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserTokens",
+                name: "mm_AspNetUserTokens",
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
@@ -199,17 +199,17 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.PrimaryKey("PK_mm_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
                     table.ForeignKey(
-                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                        name: "FK_mm_AspNetUserTokens_mm_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "mm_AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Holdings",
+                name: "mm_Holdings",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -221,17 +221,17 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Holdings", x => x.Id);
+                    table.PrimaryKey("PK_mm_Holdings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Holdings_Portfolios_PortfolioId",
+                        name: "FK_mm_Holdings_mm_Portfolios_PortfolioId",
                         column: x => x.PortfolioId,
-                        principalTable: "Portfolios",
+                        principalTable: "mm_Portfolios",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Trades",
+                name: "mm_Trades",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -245,77 +245,77 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Trades", x => x.Id);
+                    table.PrimaryKey("PK_mm_Trades", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Trades_Portfolios_PortfolioId",
+                        name: "FK_mm_Trades_mm_Portfolios_PortfolioId",
                         column: x => x.PortfolioId,
-                        principalTable: "Portfolios",
+                        principalTable: "mm_Portfolios",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetRoleClaims_RoleId",
-                table: "AspNetRoleClaims",
+                name: "IX_mm_AspNetRoleClaims_RoleId",
+                table: "mm_AspNetRoleClaims",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
-                table: "AspNetRoles",
+                table: "mm_AspNetRoles",
                 column: "NormalizedName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserClaims_UserId",
-                table: "AspNetUserClaims",
+                name: "IX_mm_AspNetUserClaims_UserId",
+                table: "mm_AspNetUserClaims",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserLogins_UserId",
-                table: "AspNetUserLogins",
+                name: "IX_mm_AspNetUserLogins_UserId",
+                table: "mm_AspNetUserLogins",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserRoles_RoleId",
-                table: "AspNetUserRoles",
+                name: "IX_mm_AspNetUserRoles_RoleId",
+                table: "mm_AspNetUserRoles",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
-                table: "AspNetUsers",
+                table: "mm_AspNetUsers",
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
-                table: "AspNetUsers",
+                table: "mm_AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Holdings_PortfolioId_Ticker",
-                table: "Holdings",
+                name: "IX_mm_Holdings_PortfolioId_Ticker",
+                table: "mm_Holdings",
                 columns: new[] { "PortfolioId", "Ticker" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Portfolios_UserId",
-                table: "Portfolios",
+                name: "IX_mm_Portfolios_UserId",
+                table: "mm_Portfolios",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Symbols_Ticker",
-                table: "Symbols",
+                name: "IX_mm_Symbols_Ticker",
+                table: "mm_Symbols",
                 column: "Ticker",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Trades_PortfolioId",
-                table: "Trades",
+                name: "IX_mm_Trades_PortfolioId",
+                table: "mm_Trades",
                 column: "PortfolioId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WatchlistItems_UserId_Ticker",
-                table: "WatchlistItems",
+                name: "IX_mm_WatchlistItems_UserId_Ticker",
+                table: "mm_WatchlistItems",
                 columns: new[] { "UserId", "Ticker" },
                 unique: true);
         }
@@ -324,40 +324,40 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AspNetRoleClaims");
+                name: "mm_AspNetRoleClaims");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserClaims");
+                name: "mm_AspNetUserClaims");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserLogins");
+                name: "mm_AspNetUserLogins");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserRoles");
+                name: "mm_AspNetUserRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserTokens");
+                name: "mm_AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Holdings");
+                name: "mm_Holdings");
 
             migrationBuilder.DropTable(
-                name: "Symbols");
+                name: "mm_Symbols");
 
             migrationBuilder.DropTable(
-                name: "Trades");
+                name: "mm_Trades");
 
             migrationBuilder.DropTable(
-                name: "WatchlistItems");
+                name: "mm_WatchlistItems");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "mm_AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "mm_AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Portfolios");
+                name: "mm_Portfolios");
         }
     }
 }

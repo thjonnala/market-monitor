@@ -18,7 +18,7 @@ services:
       # Connection string is injected from the managed database below.
       - key: ConnectionStrings__DefaultConnection
         fromDatabase:
-          name: market-monitor-db
+          name: thiruapps-db
           property: connectionString
       # Strong JWT signing key, generated and stored by Render.
       - key: Jwt__SigningKey
@@ -35,8 +35,10 @@ services:
         value: "true"
 
 databases:
-  - name: market-monitor-db
+  # Generic, shared database — multiple apps can live here, each with its own
+  # object prefix (Market Monitor uses "mm_").
+  - name: thiruapps-db
     plan: free
     region: oregon
-    databaseName: marketmonitor
-    user: marketmonitor
+    databaseName: thiruapps
+    user: thiruapps

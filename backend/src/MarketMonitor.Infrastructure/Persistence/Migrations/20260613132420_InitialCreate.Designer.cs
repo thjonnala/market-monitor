@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MarketMonitor.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260613123255_InitialCreate")]
+    [Migration("20260613132420_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -54,7 +54,7 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
                     b.HasIndex("PortfolioId", "Ticker")
                         .IsUnique();
 
-                    b.ToTable("Holdings");
+                    b.ToTable("mm_Holdings");
                 });
 
             modelBuilder.Entity("MarketMonitor.Domain.Entities.Portfolio", b =>
@@ -89,7 +89,7 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Portfolios");
+                    b.ToTable("mm_Portfolios");
                 });
 
             modelBuilder.Entity("MarketMonitor.Domain.Entities.Symbol", b =>
@@ -126,7 +126,7 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
                     b.HasIndex("Ticker")
                         .IsUnique();
 
-                    b.ToTable("Symbols");
+                    b.ToTable("mm_Symbols");
                 });
 
             modelBuilder.Entity("MarketMonitor.Domain.Entities.Trade", b =>
@@ -163,7 +163,7 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("PortfolioId");
 
-                    b.ToTable("Trades");
+                    b.ToTable("mm_Trades");
                 });
 
             modelBuilder.Entity("MarketMonitor.Domain.Entities.WatchlistItem", b =>
@@ -191,7 +191,7 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
                     b.HasIndex("UserId", "Ticker")
                         .IsUnique();
 
-                    b.ToTable("WatchlistItems");
+                    b.ToTable("mm_WatchlistItems");
                 });
 
             modelBuilder.Entity("MarketMonitor.Infrastructure.Identity.ApplicationUser", b =>
@@ -262,7 +262,7 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("mm_AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -288,7 +288,7 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("mm_AspNetRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -313,7 +313,7 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims", (string)null);
+                    b.ToTable("mm_AspNetRoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -338,7 +338,7 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("mm_AspNetUserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -360,7 +360,7 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", (string)null);
+                    b.ToTable("mm_AspNetUserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -375,7 +375,7 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("mm_AspNetUserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -394,7 +394,7 @@ namespace MarketMonitor.Infrastructure.Persistence.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", (string)null);
+                    b.ToTable("mm_AspNetUserTokens", (string)null);
                 });
 
             modelBuilder.Entity("MarketMonitor.Domain.Entities.Holding", b =>

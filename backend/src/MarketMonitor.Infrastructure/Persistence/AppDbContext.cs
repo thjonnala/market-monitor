@@ -66,5 +66,27 @@ public sealed class AppDbContext : IdentityDbContext<ApplicationUser>
             e.Property(t => t.Quantity).HasPrecision(18, 4);
             e.Property(t => t.Price).HasPrecision(18, 4);
         });
+
+        ApplyObjectNamePrefix(builder, TablePrefix);
+    }
+
+    /// <summary>Project code prefixed onto every database object (incl. Identity tables).</summary>
+    public const string TablePrefix = "mm_";
+
+    /// <summary>
+    /// Prefixes every table with the project code so this database can be shared by
+    /// multiple applications without name collisions. EF's conventions derive the
+    /// primary-key, foreign-key, and index names from the (prefixed) table name, so
+    /// those become prefixed too (e.g. PK_mm_Symbols, IX_mm_Holdings_PortfolioId_Ticker).
+    /// The migrations-history table is prefixed separately via the Npgsql options.
+    /// </summary>
+    private static void ApplyObjectNamePrefix(ModelBuilder builder, string prefix)
+    {
+        foreach (var entity in builder.Model.GetEntityTypes())
+        {
+            var table = entity.GetTableName();
+            if (table is not null && !table.StartsWith(prefix, StringComparison.Ordinal))
+                entity.SetTableName(prefix + table);
+        }
     }
 }

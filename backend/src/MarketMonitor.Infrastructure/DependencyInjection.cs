@@ -58,7 +58,11 @@ public static class DependencyInjection
                 case "postgres":
                 case "postgresql":
                     options.UseNpgsql(connectionString, o =>
-                        o.EnableRetryOnFailure()); // resilient to transient drops / cold starts
+                    {
+                        o.EnableRetryOnFailure(); // resilient to transient drops / cold starts
+                        // Own migrations-history table so the DB can be shared across apps.
+                        o.MigrationsHistoryTable($"__{AppDbContext.TablePrefix}EFMigrationsHistory");
+                    });
                     break;
                 default:
                     throw new InvalidOperationException(

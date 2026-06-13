@@ -62,7 +62,7 @@ which already matches the compose file:
 
 ```json
 "ConnectionStrings": {
-  "DefaultConnection": "Host=localhost;Port=5432;Database=marketmonitor;Username=postgres;Password=postgres"
+  "DefaultConnection": "Host=localhost;Port=5432;Database=thiruapps;Username=postgres;Password=postgres"
 }
 ```
 
@@ -70,6 +70,12 @@ The provider is selected by `Database:Provider` (`Postgres`). The same EF model 
 locally and in production — only the connection string differs (see
 [Deploying the API to Render](#deploying-the-api-to-render-docker--postgresql)). A
 `postgres://…` URL is also accepted and normalized for Npgsql automatically.
+
+> **Shared database, namespaced by project code.** The database (`thiruapps`) is generic so
+> it can host multiple applications. Every Market Monitor object is prefixed with **`mm_`**
+> (tables like `mm_Symbols`, `mm_AspNetUsers`; keys/indexes like `PK_mm_Symbols`; and its own
+> `__mm_EFMigrationsHistory`). Another app would use its own prefix in the same database
+> without collisions. The prefix is set once in `AppDbContext` (`TablePrefix`).
 
 ### b. Set secrets (local) — JWT key and Finnhub key
 
