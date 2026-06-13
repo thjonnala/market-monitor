@@ -15,8 +15,8 @@ signals, and managing a **virtual** (play-money) portfolio.
 |--------------|------------|
 | Frontend     | React (JavaScript) + Vite, React Router, Axios, Recharts |
 | Backend      | .NET 10 Web API (C#), layered API / Application / Domain / Infrastructure |
-| ORM          | Entity Framework Core (code-first migrations) |
-| Database     | SQL Server Express (local) · Azure SQL (production) |
+| ORM          | Entity Framework Core (code-first migrations) + Npgsql |
+| Database     | PostgreSQL (open source) — local via Docker · managed Postgres in production |
 | Auth         | ASP.NET Core Identity + JWT bearer tokens (hashed passwords) |
 | Market data  | Finnhub (free tier) behind an `IMarketDataProvider` abstraction, with caching, 429 backoff, and mock fallback |
 
@@ -39,7 +39,7 @@ market-monitor/
 
 - **.NET 10 SDK** (`dotnet --version` → 10.x)
 - **Node.js 18+** and npm
-- **SQL Server Express** (or LocalDB) running locally
+- **PostgreSQL** running locally (easiest: `docker compose -f backend/docker-compose.dev.yml up -d`)
 - *(optional)* A free **Finnhub** API key — without one the app runs on deterministic mock data
 
 ---
@@ -48,23 +48,28 @@ market-monitor/
 
 All commands run from `backend/`.
 
-### a. Configure the database connection
+### a. Start PostgreSQL and configure the connection
+
+Start a local Postgres (Docker):
+
+```bash
+docker compose -f backend/docker-compose.dev.yml up -d
+```
 
 Local dev uses the connection string in
-[`src/MarketMonitor.Api/appsettings.Development.json`](backend/src/MarketMonitor.Api/appsettings.Development.json):
+[`src/MarketMonitor.Api/appsettings.Development.json`](backend/src/MarketMonitor.Api/appsettings.Development.json),
+which already matches the compose file:
 
 ```json
 "ConnectionStrings": {
-  "DefaultConnection": "Server=.\\SQLEXPRESS;Database=MarketMonitor;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True"
+  "DefaultConnection": "Host=localhost;Port=5432;Database=marketmonitor;Username=postgres;Password=postgres"
 }
 ```
 
-If you use **LocalDB** instead of Express, change the server to
-`Server=(localdb)\\MSSQLLocalDB`.
-
-The provider is selected by `Database:Provider` (`SqlServer`). The same EF model is used
-for both SQL Express and Azure SQL — only the connection string differs (see
-[Production](#production-azure-sql)).
+The provider is selected by `Database:Provider` (`Postgres`). The same EF model is used
+locally and in production — only the connection string differs (see
+[Deploying the API to Render](#deploying-the-api-to-render-docker--postgresql)). A
+`postgres://…` URL is also accepted and normalized for Npgsql automatically.
 
 ### b. Set secrets (local) — JWT key and Finnhub key
 
@@ -207,7 +212,7 @@ How it's wired:
 - The workflow copies `index.html` → `404.html` so client-side routes (e.g. `/stocks/AAPL`)
   work on refresh (GitHub Pages has no rewrite rules).
 - The API base URL is baked in from [`frontend/.env.production`](frontend/.env.production)
-  (`VITE_API_BASE_URL` → the Azure App Service API). Vite's `base` stays `/` since the site is
+  (`VITE_API_BASE_URL` → the Render API). Vite's `base` stays `/` since the site is
   served at the domain root.
 
 **One-time GitHub setup:**
@@ -218,20 +223,38 @@ How it's wired:
 The deployed origin (`https://marketmonitor.thiruapps.com`) is already allowed by the API's
 CORS (`Cors:AllowedOrigins: ["*"]` in production).
 
-## Production (Azure SQL)
+## Deploying the API to Render (Docker + PostgreSQL)
 
-Do **not** hard-code production secrets. Provide them via environment variables /
-Azure App Service configuration:
+The backend runs as a **Docker** web service on **Render**, backed by **Render's managed
+PostgreSQL** — a fully open-source stack (no Azure). Everything is described in
+[`render.yaml`](render.yaml) and [`backend/Dockerfile`](backend/Dockerfile).
 
-| Setting | Environment variable |
-|---------|----------------------|
-| Azure SQL connection | `ConnectionStrings__DefaultConnection` |
-| JWT signing key      | `Jwt__SigningKey` |
-| Finnhub API key      | `MarketData__ApiKey` |
-| Allowed CORS origin  | `Cors__AllowedOrigins__0` |
+**One-time deploy:**
+1. In the [Render dashboard](https://dashboard.render.com): **New → Blueprint** → connect this
+   GitHub repo. Render reads `render.yaml` and provisions the **web service** + **Postgres**.
+2. On the `market-monitor-api` service, set **`MarketData__ApiKey`** (Environment tab) to your
+   Finnhub key for live prices — or leave it empty to run on mock data.
+3. **Apply.** Render builds the image, the API connects to Postgres, applies EF migrations,
+   seeds sample data, and `/health` returns 200.
 
-`Database:Provider` stays `SqlServer` (it uses `EnableRetryOnFailure` for transient Azure
-SQL resiliency). The same migrations apply to Azure SQL.
+The blueprint wires these env vars automatically (no secrets hard-coded):
+
+| Setting | Source |
+|---------|--------|
+| `Database__Provider` = `Postgres` | render.yaml |
+| `ConnectionStrings__DefaultConnection` | injected from the managed Postgres DB |
+| `Jwt__SigningKey` | generated by Render |
+| `Cors__AllowedOrigins__0` | `https://marketmonitor.thiruapps.com` |
+| `MarketData__ApiKey` | set in the dashboard (secret) |
+
+> A `postgres://…` connection URL is accepted and normalized to Npgsql format automatically.
+> **Free-tier notes:** the web service sleeps after ~15 min idle (first request cold-starts in
+> ~1 min); Render's free Postgres expires after ~30 days — for a permanent free DB, point
+> `ConnectionStrings__DefaultConnection` at **Neon** or **Supabase** instead.
+
+After the API is live, set `VITE_API_BASE_URL` in
+[`frontend/.env.production`](frontend/.env.production) to the Render URL and push (the GitHub
+Pages workflow rebuilds the frontend against it).
 
 ---
 

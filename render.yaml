@@ -1,0 +1,42 @@
+# Render Blueprint — hosts the Market Monitor .NET API (Docker) + managed PostgreSQL.
+# Deploy: Render Dashboard -> New -> Blueprint -> connect this repo -> Apply.
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: market-monitor-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    region: oregon
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: Database__Provider
+        value: Postgres
+      # Connection string is injected from the managed database below.
+      - key: ConnectionStrings__DefaultConnection
+        fromDatabase:
+          name: market-monitor-db
+          property: connectionString
+      # Strong JWT signing key, generated and stored by Render.
+      - key: Jwt__SigningKey
+        generateValue: true
+      # Allow the GitHub Pages frontend origin (CORS).
+      - key: Cors__AllowedOrigins__0
+        value: https://marketmonitor.thiruapps.com
+      # Market data: set the key in the dashboard for live prices; empty => mock data.
+      - key: MarketData__Provider
+        value: Finnhub
+      - key: MarketData__ApiKey
+        sync: false
+      - key: SeedOnStartup
+        value: "true"
+
+databases:
+  - name: market-monitor-db
+    plan: free
+    region: oregon
+    databaseName: marketmonitor
+    user: marketmonitor

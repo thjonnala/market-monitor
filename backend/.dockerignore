@@ -1,0 +1,10 @@
+# Keep the build context small and free of local-only / secret files.
+**/bin/
+**/obj/
+publish*/
+*.zip
+**/appsettings.Development.json
+**/appsettings.Production.json
+**/*.user
+**/.vs/
+docker-compose*.yml

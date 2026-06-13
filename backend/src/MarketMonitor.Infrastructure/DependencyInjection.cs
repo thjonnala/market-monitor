@@ -38,30 +38,58 @@ public static class DependencyInjection
 
     private static void AddPersistence(IServiceCollection services, IConfiguration configuration)
     {
-        // Provider switch via config. Both SQL Express (local) and Azure SQL (prod)
-        // use the SqlServer provider; only the connection string differs. The
-        // connection string comes from appsettings.Development.json locally and from
-        // the ConnectionStrings__DefaultConnection env var in production.
-        var provider = configuration["Database:Provider"] ?? "SqlServer";
-        var connectionString = configuration.GetConnectionString("DefaultConnection")
+        // Open-source PostgreSQL via the Npgsql provider. The same EF model is used
+        // for local dev and production; only the connection string differs. It comes
+        // from appsettings.Development.json locally and from the
+        // ConnectionStrings__DefaultConnection env var in production (e.g. Render).
+        var provider = configuration["Database:Provider"] ?? "Postgres";
+        var raw = configuration.GetConnectionString("DefaultConnection")
             ?? throw new InvalidOperationException(
                 "No 'DefaultConnection' connection string configured. " +
                 "Set it in appsettings.Development.json (local) or the " +
                 "ConnectionStrings__DefaultConnection environment variable (prod).");
 
+        var connectionString = NormalizePostgresConnectionString(raw);
+
         services.AddDbContext<AppDbContext>(options =>
         {
             switch (provider.ToLowerInvariant())
             {
-                case "sqlserver":
-                case "azuresql":
-                    options.UseSqlServer(connectionString, sql =>
-                        sql.EnableRetryOnFailure()); // resilient to transient Azure SQL drops
+                case "postgres":
+                case "postgresql":
+                    options.UseNpgsql(connectionString, o =>
+                        o.EnableRetryOnFailure()); // resilient to transient drops / cold starts
                     break;
                 default:
-                    throw new InvalidOperationException($"Unsupported Database:Provider '{provider}'.");
+                    throw new InvalidOperationException(
+                        $"Unsupported Database:Provider '{provider}'. Supported: 'Postgres'.");
             }
         });
+    }
+
+    /// <summary>
+    /// Managed Postgres providers (Render, Heroku, Railway, …) hand out a
+    /// "postgres://user:pass@host:port/db" URL, but Npgsql expects keyword=value.
+    /// Convert URLs; pass keyword strings through unchanged.
+    /// </summary>
+    private static string NormalizePostgresConnectionString(string cs)
+    {
+        if (!cs.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) &&
+            !cs.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase))
+            return cs;
+
+        var uri = new Uri(cs);
+        var userInfo = uri.UserInfo.Split(':', 2);
+        var builder = new Npgsql.NpgsqlConnectionStringBuilder
+        {
+            Host = uri.Host,
+            Port = uri.Port > 0 ? uri.Port : 5432,
+            Username = Uri.UnescapeDataString(userInfo[0]),
+            Password = userInfo.Length > 1 ? Uri.UnescapeDataString(userInfo[1]) : string.Empty,
+            Database = uri.AbsolutePath.TrimStart('/'),
+            SslMode = Npgsql.SslMode.Require,      // encrypt; managed Postgres requires TLS
+        };
+        return builder.ConnectionString;
     }
 
     private static void AddIdentityCore(IServiceCollection services)
