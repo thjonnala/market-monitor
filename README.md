@@ -39,7 +39,7 @@ market-monitor/
 
 - **.NET 10 SDK** (`dotnet --version` → 10.x)
 - **Node.js 18+** and npm
-- **PostgreSQL** running locally (easiest: `docker compose -f backend/docker-compose.dev.yml up -d`)
+- **PostgreSQL** running locally — provided by the shared [`thiru-apps-db`](../thiru-apps-db) repo
 - *(optional)* A free **Finnhub** API key — without one the app runs on deterministic mock data
 
 ---
@@ -50,10 +50,13 @@ All commands run from `backend/`.
 
 ### a. Start PostgreSQL and configure the connection
 
-Start a local Postgres (Docker):
+Start the shared local Postgres, which lives in the sibling
+[`thiru-apps-db`](../thiru-apps-db) repo (one Postgres + `thiruapps` database shared by all
+*thiruapps* projects):
 
 ```bash
-docker compose -f backend/docker-compose.dev.yml up -d
+# from C:\Users\thiru\source\repos\thiru-apps-db
+docker compose up -d
 ```
 
 Local dev uses the connection string in
