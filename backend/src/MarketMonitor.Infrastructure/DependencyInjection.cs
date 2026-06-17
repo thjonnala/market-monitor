@@ -72,7 +72,7 @@ public static class DependencyInjection
     }
 
     /// <summary>
-    /// Managed Postgres providers (Render, Heroku, Railway, …) hand out a
+    /// Some managed Postgres providers hand out a
     /// "postgres://user:pass@host:port/db" URL, but Npgsql expects keyword=value.
     /// Convert URLs; pass keyword strings through unchanged.
     /// </summary>
